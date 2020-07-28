@@ -1,0 +1,26 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - echo Nothing to do in the install phase.
+  pre_build:
+    commands:
+      - echo Transforming files for automated build...
+      - sed -i "s/www/stage/g" app_main/src/normalDashboardDebug/res/values/strings.xml
+      - sed -i "s/normalInternalDebugImplementation.*$//g" app_main/build.gradle
+      - sed -i "s/, ':hover\.sdk'//g" settings.gradle
+      - sed -i "s/BUILD_PLACEHOLDER_SUFFIX/$SUFFIX/g" app_main/build.gradle
+      - sed -i "s/BUILD_PLACEHOLDER_SUFFIX/$SUFFIX/g" app_main/src/main/AndroidManifest.xml
+      - sed -i "s/BUILD_PLACEHOLDER_SUFFIX/$SUFFIX/g" app_main/google-services.json
+  build:
+    commands:
+      - echo Build started on `date`
+      - ./gradlew clean assembleDashboard --stacktrace
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - app_main/build/outputs/apk/normalDashboard/release/hover-runner-normal-dashboard-release.apk
+    - app_main/build/outputs/apk/normalDashboard/debug/hover-runner-normal-dashboard-debug.apk
